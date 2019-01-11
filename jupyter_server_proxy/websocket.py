@@ -38,6 +38,7 @@ def pingable_ws_connect(request=None, on_message_callback=None,
     # Copy and convert the headers dict/object (see comments in
     # AsyncHTTPClient.fetch)
     request.headers = httputil.HTTPHeaders(request.headers)
+    del request.headers['Host']
     request = httpclient._RequestProxy(
         request, httpclient.HTTPRequest._DEFAULTS)
 
