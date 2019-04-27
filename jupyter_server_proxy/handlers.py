@@ -42,8 +42,15 @@ class LocalProxyHandler(WebSocketHandlerMixin, IPythonHandler):
         We establish a websocket connection to the proxied backend &
         set up a callback to relay messages through.
         """
+        # make sure port is an integer.
+        # Subclasses might give us things that are not integers, leading to
+        # unclear error messages
+        if not isinstance(port, int):
+            raise ValueError(f'port should be an integer, found {port} instead')
+
+        # proxied_path should start with a /
         if not proxied_path.startswith('/'):
-            proxied_path = '/' + proxied_path
+            raise ValueError(f'proxied_path should start with a /, found "{proxied_path}" instead"')
 
         client_uri = self.get_client_uri('ws', port, proxied_path)
         headers = self.request.headers
@@ -184,6 +191,16 @@ class LocalProxyHandler(WebSocketHandlerMixin, IPythonHandler):
             {base_url}/proxy/absolute/{port([0-9]+)}/{proxied_path}
             {base_url}/{proxy_base}/{proxied_path}
         '''
+
+        # make sure port is an integer.
+        # Subclasses might give us things that are not integers, leading to
+        # unclear error messages
+        if not isinstance(port, int):
+            raise ValueError(f'port should be an integer, found {port} instead')
+
+        # proxied_path should start with a /
+        if not proxied_path.startswith('/'):
+            raise ValueError(f'proxied_path should start with a /, found "{proxied_path}" instead"')
 
         if 'Proxy-Connection' in self.request.headers:
             del self.request.headers['Proxy-Connection']
